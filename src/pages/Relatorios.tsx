@@ -49,7 +49,7 @@ const Relatorios = () => {
         </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
         {/* Bar chart - by class */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -94,7 +94,8 @@ const Relatorios = () => {
             </div>
             <h2 className="font-bold text-foreground">Distribuição Geral</h2>
           </div>
-          <ResponsiveContainer width="100%" height={280}>
+          <ResponsiveContainer width="100%" height={240}>
+
             <PieChart>
               <Pie
                 data={pieData}
@@ -132,7 +133,7 @@ const Relatorios = () => {
               Tendência Semanal de Frequência (%)
             </h2>
           </div>
-          <ResponsiveContainer width="100%" height={260}>
+          <ResponsiveContainer width="100%" height={220}>
             <LineChart data={weeklyData}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(200,20%,88%)" />
               <XAxis dataKey="dia" tick={{ fontSize: 12 }} />

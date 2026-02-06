@@ -30,9 +30,9 @@ export function OverviewCard({ title, value, icon: Icon, variant }: OverviewCard
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-muted-foreground">{title}</p>
-          <p className="mt-2 text-4xl font-bold text-foreground">{value}</p>
+          <p className="mt-2 text-2xl md:text-4xl font-bold text-foreground">{value}</p>
         </div>
-        <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${iconStyles[variant]}`}>
+        <div className={`flex h-10 w-10 md:h-12 md:w-12 items-center justify-center rounded-xl ${iconStyles[variant]}`}>
           <Icon className="h-6 w-6" />
         </div>
       </div>

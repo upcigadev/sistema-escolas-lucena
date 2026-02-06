@@ -38,7 +38,7 @@ const ClassDetail = () => {
       </motion.div>
 
       {/* Two columns */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4 md:gap-6 lg:grid-cols-2">
         {/* Present */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
