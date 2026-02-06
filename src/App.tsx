@@ -7,6 +7,9 @@ import { AppProvider } from "./contexts/AppContext";
 import { AppLayout } from "./components/AppLayout";
 import Dashboard from "./pages/Dashboard";
 import ClassDetail from "./pages/ClassDetail";
+import TurmasAlunos from "./pages/TurmasAlunos";
+import Relatorios from "./pages/Relatorios";
+import Configuracoes from "./pages/Configuracoes";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -22,6 +25,9 @@ const App = () => (
             <Route element={<AppLayout />}>
               <Route path="/" element={<Dashboard />} />
               <Route path="/turma/:id" element={<ClassDetail />} />
+              <Route path="/turmas" element={<TurmasAlunos />} />
+              <Route path="/relatorios" element={<Relatorios />} />
+              <Route path="/configuracoes" element={<Configuracoes />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Routes>
