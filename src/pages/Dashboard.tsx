@@ -15,7 +15,7 @@ const Dashboard = () => {
       </motion.div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         <OverviewCard
           title="Total de Alunos Esperados Hoje"
           value={getTotalExpected()}
@@ -39,7 +39,7 @@ const Dashboard = () => {
       {/* Class Grid */}
       <div>
         <h2 className="text-lg font-semibold text-foreground mb-4">Grade de Turmas</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
           {mockClassRooms.map((classroom, index) => (
             <ClassCard key={classroom.id} classroom={classroom} index={index} />
           ))}
