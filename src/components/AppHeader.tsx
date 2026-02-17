@@ -1,6 +1,8 @@
 import { ConnectionStatus } from "./ConnectionStatus";
 import { useAppContext } from "@/contexts/AppContext";
-import { Bell } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { Bell, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MobileSidebarTrigger } from "./AppSidebar";
 
@@ -10,6 +12,13 @@ interface AppHeaderProps {
 
 export function AppHeader({ onMobileMenuOpen }: AppHeaderProps) {
   const { connectionStatus, setConnectionStatus } = useAppContext();
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
+  };
 
   return (
     <header className="flex h-14 md:h-16 items-center justify-between border-b border-border bg-card px-4 md:px-6">
@@ -38,6 +47,12 @@ export function AppHeader({ onMobileMenuOpen }: AppHeaderProps) {
             3
           </span>
         </Button>
+
+        {user && (
+          <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleLogout} title="Sair">
+            <LogOut className="h-4 w-4 text-muted-foreground" />
+          </Button>
+        )}
       </div>
     </header>
   );

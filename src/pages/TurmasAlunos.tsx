@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { mockClassRooms, mockStudents } from "@/data/mockData";
+import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { Users, Search, ChevronDown, ChevronUp, User, Clock, Pencil, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -20,11 +21,20 @@ const TurmasAlunos = () => {
   const [modalTurmaId, setModalTurmaId] = useState<string | undefined>();
   const [biometryStatus, setBiometryStatus] = useState<"pending" | "success">("pending");
 
-  const filtered = mockClassRooms.filter(
+  const { user } = useAuth();
+
+  // Filter classes by role
+  const visibleClasses = user?.role === "PROFESSOR" && user.turmaIds
+    ? mockClassRooms.filter((c) => user.turmaIds!.includes(c.id))
+    : mockClassRooms;
+
+  const filtered = visibleClasses.filter(
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.grade.toLowerCase().includes(search.toLowerCase())
   );
+
+  const canEdit = user?.role !== "PROFESSOR";
 
   const openAddModal = (turmaId?: string) => {
     setEditingStudent(null);
@@ -88,9 +98,11 @@ const TurmasAlunos = () => {
           <h1 className="text-xl md:text-2xl font-bold text-foreground">Turmas & Alunos</h1>
           <p className="text-muted-foreground mt-1 text-sm">Gerencie turmas e visualize a lista de alunos</p>
         </div>
-        <Button onClick={() => openAddModal()} size="sm" className="gap-1.5">
-          <Plus className="h-4 w-4" /> Adicionar Aluno
-        </Button>
+        {canEdit && (
+          <Button onClick={() => openAddModal()} size="sm" className="gap-1.5">
+            <Plus className="h-4 w-4" /> Adicionar Aluno
+          </Button>
+        )}
       </motion.div>
 
       <div className="relative max-w-sm">
