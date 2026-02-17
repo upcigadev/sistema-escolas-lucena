@@ -1,21 +1,32 @@
 import { useLocation, Link } from "react-router-dom";
-import { LayoutDashboard, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Menu, GraduationCap } from "lucide-react";
 import { SchoolLogo } from "./SchoolLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
+import { useAuth, type UserRole } from "@/contexts/AuthContext";
 
-const navItems = [
-  { title: "Dashboard", path: "/", icon: LayoutDashboard },
-  { title: "Turmas & Alunos", path: "/turmas", icon: Users },
-  { title: "Relatórios", path: "/relatorios", icon: BarChart3 },
-  { title: "Configurações iDFace", path: "/configuracoes", icon: Settings },
+interface NavItem {
+  title: string;
+  path: string;
+  icon: React.ElementType;
+  roles: UserRole[];
+}
+
+const allNavItems: NavItem[] = [
+  { title: "Dashboard", path: "/", icon: LayoutDashboard, roles: ["ADMIN", "PREFEITO", "DIRETOR", "PROFESSOR"] },
+  { title: "Turmas & Alunos", path: "/turmas", icon: Users, roles: ["ADMIN", "PREFEITO", "DIRETOR", "PROFESSOR"] },
+  { title: "Relatórios", path: "/relatorios", icon: BarChart3, roles: ["ADMIN", "PREFEITO", "DIRETOR"] },
+  { title: "Configurações iDFace", path: "/configuracoes", icon: Settings, roles: ["ADMIN"] },
+  { title: "Área do Aluno", path: "/area-do-aluno", icon: GraduationCap, roles: ["RESPONSAVEL"] },
 ];
 
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {
   const location = useLocation();
+  const { user } = useAuth();
+  const navItems = allNavItems.filter((item) => user && item.roles.includes(user.role));
 
   return (
     <nav className="flex-1 space-y-1 px-3">
@@ -57,6 +68,8 @@ export function MobileSidebarTrigger({ onClick }: { onClick: () => void }) {
 export function AppSidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean; setMobileOpen: (v: boolean) => void }) {
   const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuth();
+  const navItems = allNavItems.filter((item) => user && item.roles.includes(user.role));
 
   if (isMobile) {
     return (
@@ -68,13 +81,14 @@ export function AppSidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean;
           </div>
           <div className="mx-3 mb-4 h-px bg-sidebar-border/50" />
           <SidebarNav onNavigate={() => setMobileOpen(false)} />
-          <div className="p-4">
-            <div className="rounded-lg bg-sidebar-accent/30 p-3">
-              <p className="text-xs text-sidebar-muted">
-                Sistema de Frequência v1.0
-              </p>
+          {user && (
+            <div className="p-4 border-t border-sidebar-border/30">
+              <div className="rounded-lg bg-sidebar-accent/30 p-3">
+                <p className="text-xs text-sidebar-foreground font-medium truncate">{user.name}</p>
+                <p className="text-[10px] text-sidebar-muted capitalize">{user.role.toLowerCase()}</p>
+              </div>
             </div>
-          </div>
+          )}
         </SheetContent>
       </Sheet>
     );
@@ -120,15 +134,18 @@ export function AppSidebar({ mobileOpen, setMobileOpen }: { mobileOpen: boolean;
         {collapsed ? <ChevronRight className="h-3 w-3" /> : <ChevronLeft className="h-3 w-3" />}
       </button>
 
-      <div className="p-4">
-        <div className="rounded-lg bg-sidebar-accent/30 p-3">
-          {!collapsed && (
-            <p className="text-xs text-sidebar-muted">
-              Sistema de Frequência v1.0
-            </p>
-          )}
+      {user && (
+        <div className="p-4">
+          <div className="rounded-lg bg-sidebar-accent/30 p-3">
+            {!collapsed ? (
+              <>
+                <p className="text-xs text-sidebar-foreground font-medium truncate">{user.name}</p>
+                <p className="text-[10px] text-sidebar-muted capitalize">{user.role.toLowerCase()}</p>
+              </>
+            ) : null}
+          </div>
         </div>
-      </div>
+      )}
     </motion.aside>
   );
 }
