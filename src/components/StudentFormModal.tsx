@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -10,8 +10,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { mockClassRooms, Student } from "@/data/mockData";
-import { Camera, Upload, User, Cpu } from "lucide-react";
+import { User, Cpu, ScanFace } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 const phoneRegex = /^\(\d{2}\)\s?\d{4,5}-\d{4}$/;
 
@@ -30,6 +31,8 @@ interface StudentFormModalProps {
   student?: Student | null;
   defaultTurmaId?: string;
   onSave: (data: StudentFormValues & { foto_base64?: string; sendToTerminal: boolean }) => void;
+  onCaptureBiometry: (matricula: string) => void;
+  biometryStatus?: "pending" | "success";
 }
 
 function applyPhoneMask(value: string): string {
@@ -39,10 +42,9 @@ function applyPhoneMask(value: string): string {
   return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
 }
 
-export function StudentFormModal({ open, onOpenChange, student, defaultTurmaId, onSave }: StudentFormModalProps) {
+export function StudentFormModal({ open, onOpenChange, student, defaultTurmaId, onSave, onCaptureBiometry, biometryStatus = "pending" }: StudentFormModalProps) {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [sendToTerminal, setSendToTerminal] = useState(true);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<StudentFormValues>({
     resolver: zodResolver(studentSchema),
@@ -77,17 +79,7 @@ export function StudentFormModal({ open, onOpenChange, student, defaultTurmaId, 
     }
   }, [open, student, defaultTurmaId, form]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (file.size > 5 * 1024 * 1024) {
-      toast({ title: "Arquivo muito grande", description: "Máximo 5MB", variant: "destructive" });
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = () => setPhotoPreview(reader.result as string);
-    reader.readAsDataURL(file);
-  };
+  const matriculaValue = form.watch("matricula");
 
   const onSubmit = (values: StudentFormValues) => {
     onSave({ ...values, foto_base64: photoPreview || undefined, sendToTerminal });
@@ -109,40 +101,27 @@ export function StudentFormModal({ open, onOpenChange, student, defaultTurmaId, 
           </DialogTitle>
         </DialogHeader>
 
-        {/* Photo upload */}
+        {/* Biometry section */}
         <div className="flex flex-col items-center gap-3 py-2">
-          <div
-            className="relative h-24 w-24 rounded-full border-2 border-dashed border-primary/30 bg-muted flex items-center justify-center overflow-hidden cursor-pointer hover:border-primary/60 transition-colors"
-            onClick={() => fileInputRef.current?.click()}
-          >
+          <div className="relative h-24 w-24 rounded-full border-2 border-dashed border-primary/30 bg-muted flex items-center justify-center overflow-hidden">
             {photoPreview ? (
               <img src={photoPreview} alt="Foto" className="h-full w-full object-cover" />
             ) : (
               <User className="h-10 w-10 text-muted-foreground" />
             )}
           </div>
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()}>
-              <Upload className="h-3.5 w-3.5 mr-1.5" /> Upload
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => {
-                toast({ title: "Webcam", description: "Captura via webcam será integrada com o hardware Control iD." });
-              }}
-            >
-              <Camera className="h-3.5 w-3.5 mr-1.5" /> Webcam
-            </Button>
-          </div>
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
+          <Badge variant={biometryStatus === "success" ? "default" : "secondary"} className={biometryStatus === "success" ? "bg-success text-success-foreground" : "bg-warning/20 text-warning"}>
+            {biometryStatus === "success" ? "Biometria Cadastrada ✅" : "Biometria Pendente ⚠️"}
+          </Badge>
+          <Button
+            type="button"
+            variant="outline"
+            className="w-full gap-2"
+            disabled={!matriculaValue || matriculaValue.length < 4}
+            onClick={() => onCaptureBiometry(matriculaValue)}
+          >
+            <ScanFace className="h-4 w-4" /> 📸 Capturar Biometria no Terminal
+          </Button>
         </div>
 
         <Form {...form}>
