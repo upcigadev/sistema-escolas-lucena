@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import { useParams, Link } from "react-router-dom";
 import { mockClassRooms, mockStudents } from "@/data/mockData";
 import { useAppContext } from "@/contexts/AppContext";
@@ -142,6 +143,9 @@ const ClassDetail = () => {
         student={editingStudent}
         defaultTurmaId={id}
         onSave={(data) => console.log("Student saved:", data)}
+        onCaptureBiometry={(matricula) => {
+          toast({ title: "Comando enviado!", description: "Peça para o aluno olhar para o terminal..." });
+        }}
       />
     </div>
   );

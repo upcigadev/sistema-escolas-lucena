@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import { mockClassRooms, mockStudents } from "@/data/mockData";
 import { motion } from "framer-motion";
 import { Users, Search, ChevronDown, ChevronUp, User, Clock, Pencil, Plus } from "lucide-react";
@@ -17,6 +18,7 @@ const TurmasAlunos = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [modalTurmaId, setModalTurmaId] = useState<string | undefined>();
+  const [biometryStatus, setBiometryStatus] = useState<"pending" | "success">("pending");
 
   const filtered = mockClassRooms.filter(
     (c) =>
@@ -27,13 +29,56 @@ const TurmasAlunos = () => {
   const openAddModal = (turmaId?: string) => {
     setEditingStudent(null);
     setModalTurmaId(turmaId);
+    setBiometryStatus("pending");
     setModalOpen(true);
   };
 
   const openEditModal = (student: Student) => {
     setEditingStudent(student);
     setModalTurmaId(student.turma_id);
+    setBiometryStatus(student.foto_base64 ? "success" : "pending");
     setModalOpen(true);
+  };
+
+  const handleCaptureBiometry = async (matricula: string) => {
+    if ((window as any).ipcRenderer) {
+      try {
+        await (window as any).ipcRenderer.invoke('capturar-facial', matricula);
+        toast({ title: "Comando enviado!", description: "Peça para o aluno olhar para o terminal..." });
+        setBiometryStatus("success");
+      } catch (err: any) {
+        toast({ title: "Erro ao capturar biometria", description: err?.message || "Falha na comunicação com o terminal.", variant: "destructive" });
+      }
+    } else {
+      toast({ title: "Modo desenvolvimento", description: "IPC não disponível. Simulando captura..." });
+      setBiometryStatus("success");
+    }
+  };
+
+  const handleSave = async (data: any) => {
+    const alunoPayload = {
+      nome: data.name,
+      matricula: data.matricula,
+      turma_id: data.turma_id,
+      telefone_responsavel: data.telefone_responsavel,
+      sync_control_id: data.sendToTerminal,
+    };
+
+    if ((window as any).ipcRenderer) {
+      try {
+        if (editingStudent) {
+          await (window as any).ipcRenderer.invoke('editar-aluno', { id: editingStudent.id, ...alunoPayload });
+        } else {
+          await (window as any).ipcRenderer.invoke('criar-aluno', alunoPayload);
+        }
+        toast({ title: editingStudent ? "Aluno atualizado!" : "Aluno cadastrado!", description: "Dados salvos com sucesso." });
+      } catch (err: any) {
+        toast({ title: "Erro ao salvar", description: err?.message || "Falha na comunicação.", variant: "destructive" });
+      }
+    } else {
+      console.log("Mock save (no IPC):", { editing: !!editingStudent, ...alunoPayload });
+      toast({ title: editingStudent ? "Aluno atualizado (mock)" : "Aluno cadastrado (mock)", description: "IPC indisponível — dados logados no console." });
+    }
   };
 
   return (
@@ -216,9 +261,9 @@ const TurmasAlunos = () => {
         onOpenChange={setModalOpen}
         student={editingStudent}
         defaultTurmaId={modalTurmaId}
-        onSave={(data) => {
-          console.log("Student saved:", data);
-        }}
+        onSave={handleSave}
+        onCaptureBiometry={handleCaptureBiometry}
+        biometryStatus={biometryStatus}
       />
     </div>
   );
