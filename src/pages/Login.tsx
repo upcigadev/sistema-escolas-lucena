@@ -25,7 +25,7 @@ const Login = () => {
     const user = mockUsers.find((u) => u.role === role);
     if (user) {
       login(user);
-      navigate(role === "RESPONSAVEL" ? "/area-do-aluno" : "/");
+      navigate(role === "RESPONSAVEL" ? "/area-familia" : "/");
     }
   };
 
@@ -34,7 +34,7 @@ const Login = () => {
     const user = mockUsers.find((u) => u.email === email);
     if (user) {
       login(user);
-      navigate(user.role === "RESPONSAVEL" ? "/area-do-aluno" : "/");
+      navigate(user.role === "RESPONSAVEL" ? "/area-familia" : "/");
     }
   };
 
@@ -45,7 +45,6 @@ const Login = () => {
         animate={{ opacity: 1, y: 0 }}
         className="w-full max-w-md space-y-6"
       >
-        {/* Header */}
         <div className="flex flex-col items-center gap-3 text-center">
           <div className="gradient-ocean rounded-2xl p-4">
             <SchoolLogo collapsed={false} />
@@ -56,28 +55,15 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Login form */}
         <div className="rounded-xl border bg-card p-6 shadow-card space-y-5">
           <form onSubmit={handleFormLogin} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-foreground">E-mail</label>
-              <Input
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="mt-1"
-              />
+              <Input type="email" placeholder="seu@email.com" value={email} onChange={(e) => setEmail(e.target.value)} className="mt-1" />
             </div>
             <div>
               <label className="text-sm font-medium text-foreground">Senha</label>
-              <Input
-                type="password"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1"
-              />
+              <Input type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} className="mt-1" />
             </div>
             <Button type="submit" className="w-full gap-2">
               <LogIn className="h-4 w-4" /> Entrar
@@ -85,7 +71,6 @@ const Login = () => {
           </form>
         </div>
 
-        {/* Quick access */}
         <div className="rounded-xl border border-dashed border-warning/40 bg-warning/5 p-5 space-y-3">
           <p className="text-xs font-semibold text-warning text-center uppercase tracking-wide">
             ⚡ Acesso Rápido (Ambiente de Teste)
