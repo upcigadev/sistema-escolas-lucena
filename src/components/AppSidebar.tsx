@@ -1,5 +1,5 @@
 import { useLocation, Link } from "react-router-dom";
-import { LayoutDashboard, Users, BarChart3, Settings, ChevronLeft, ChevronRight, Menu, GraduationCap } from "lucide-react";
+import { LayoutDashboard, Users, BarChart3, Cpu, ChevronLeft, ChevronRight, Menu, GraduationCap } from "lucide-react";
 import { SchoolLogo } from "./SchoolLogo";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -17,10 +17,10 @@ interface NavItem {
 
 const allNavItems: NavItem[] = [
   { title: "Dashboard", path: "/", icon: LayoutDashboard, roles: ["ADMIN", "PREFEITO", "DIRETOR", "PROFESSOR"] },
-  { title: "Turmas & Alunos", path: "/turmas", icon: Users, roles: ["ADMIN", "PREFEITO", "DIRETOR", "PROFESSOR"] },
+  { title: "Turmas & Alunos", path: "/turmas", icon: Users, roles: ["ADMIN", "DIRETOR", "PROFESSOR"] },
   { title: "Relatórios", path: "/relatorios", icon: BarChart3, roles: ["ADMIN", "PREFEITO", "DIRETOR"] },
-  { title: "Configurações iDFace", path: "/configuracoes", icon: Settings, roles: ["ADMIN"] },
-  { title: "Área do Aluno", path: "/area-do-aluno", icon: GraduationCap, roles: ["RESPONSAVEL"] },
+  { title: "Terminais IoT", path: "/terminais", icon: Cpu, roles: ["ADMIN"] },
+  { title: "Área da Família", path: "/area-familia", icon: GraduationCap, roles: ["RESPONSAVEL"] },
 ];
 
 function SidebarNav({ onNavigate }: { onNavigate?: () => void }) {

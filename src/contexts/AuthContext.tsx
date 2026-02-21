@@ -7,9 +7,7 @@ export interface AppUser {
   name: string;
   email: string;
   role: UserRole;
-  /** IDs das turmas vinculadas (PROFESSOR) */
   turmaIds?: string[];
-  /** IDs dos alunos vinculados (RESPONSAVEL) */
   alunoIds?: string[];
 }
 
@@ -18,7 +16,7 @@ export const mockUsers: AppUser[] = [
   { id: "u2", name: "João Prefeito", email: "prefeito@lucena.gov.br", role: "PREFEITO" },
   { id: "u3", name: "Maria Diretora", email: "diretora@lucena.edu.br", role: "DIRETOR" },
   { id: "u4", name: "Prof. Ana Lima", email: "prof.ana@lucena.edu.br", role: "PROFESSOR", turmaIds: ["101", "201"] },
-  { id: "u5", name: "José da Silva (Pai)", email: "jose.pai@email.com", role: "RESPONSAVEL", alunoIds: ["1"] },
+  { id: "u5", name: "José da Silva (Pai)", email: "jose.pai@email.com", role: "RESPONSAVEL", alunoIds: ["1", "31"] },
 ];
 
 interface AuthContextType {
